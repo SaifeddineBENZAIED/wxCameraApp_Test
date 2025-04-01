@@ -9,6 +9,7 @@
 
 #include "wxAppTestMain.h"
 #include "CameraPanel.h"
+#include "ZipManager.h"
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/filedlg.h>
@@ -118,5 +119,15 @@ void wxAppTestFrame::OnFetchTweets(wxCommandEvent& event)
         wxString username = dialog.GetValue();
         // Implement Twitter API call here
         StatusBar1->SetStatusText(wxString::Format("Fetching tweets for @%s...", username));
+    }
+}
+
+void wxAppTestFrame::OnCreateZip(wxCommandEvent& event) {
+    wxString folder = wxDirSelector("Choisissez le dossier contenant les captures d'écran");
+    if (!folder.IsEmpty()) {
+        wxString zipFile = wxSaveFileSelector("Archive ZIP", "zip", "captures.zip");
+        if (!zipFile.IsEmpty()) {
+            ZipManager::CreateZip(zipFile, folder);
+        }
     }
 }
