@@ -10,6 +10,7 @@
 #include "wxAppTestMain.h"
 #include "CameraPanel.h"
 #include "ZipManager.h"
+#include "TwitterAPI.h"
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/filedlg.h>
@@ -129,5 +130,18 @@ void wxAppTestFrame::OnCreateZip(wxCommandEvent& event) {
         if (!zipFile.IsEmpty()) {
             ZipManager::CreateZip(zipFile, folder);
         }
+    }
+}
+
+void wxAppTestFrame::OnGetTweets(wxCommandEvent& event) {
+    std::string bearerToken = "*************";  // clé API Twitter
+    std::string query = "wxWidgets";
+
+    std::string tweetsJson = TwitterAPI::GetTweets(bearerToken, query);
+
+    if (!tweetsJson.empty()) {
+        wxMessageBox("Tweets récupérés :\n" + tweetsJson, "Twitter", wxICON_INFORMATION);
+    } else {
+        wxMessageBox("Aucun tweet trouvé ou erreur d'API.", "Erreur", wxICON_ERROR);
     }
 }
