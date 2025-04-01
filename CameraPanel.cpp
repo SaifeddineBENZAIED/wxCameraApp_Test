@@ -1,4 +1,8 @@
 #include "CameraPanel.h"
+#include <wx/filename.h>
+#include <wx/image.h>
+#include <wx/wfstream.h>
+#include <opencv2/imgcodecs.hpp>
 
 wxBEGIN_EVENT_TABLE(CameraPanel, wxPanel)
     EVT_PAINT(CameraPanel::OnPaint)
@@ -9,7 +13,7 @@ CameraPanel::CameraPanel(wxWindow* parent)
     : wxPanel(parent), timer(this, wxID_ANY) {
     cap.open(0);  // Ouvre la webcam
     if (!cap.isOpened()) {
-        wxLogError("Erreur: Impossible d'ouvrir la cam�ra.");
+        wxLogError("Erreur: Impossible d'ouvrir la caméra.");
         return;
     }
     timer.Start(30);
@@ -41,5 +45,16 @@ void CameraPanel::OnTimer(wxTimerEvent& event) {
 }
 
 bool CameraPanel::SaveScreenshot(const wxString& filePath) {
-    return SaveScreenshot(filePath.ToStdString());
+    if (frame.empty()) {
+        wxMessageBox("Aucune image capturée.", "Erreur", wxICON_ERROR);
+        return false;
+    }
+
+    if (!cv::imwrite(filePath.ToStdString(), frame)) {
+        wxMessageBox("Échec de l'enregistrement de l'image.", "Erreur", wxICON_ERROR);
+        return false;
+    }
+
+    wxMessageBox("Capture d'écran enregistrée avec succès !", "Succès", wxICON_INFORMATION);
+    return true;
 }
